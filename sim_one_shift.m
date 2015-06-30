@@ -16,7 +16,7 @@ function x = sim_one_shift(T, sRate, SNR, freq, phi, delta_phi, t0)
 
 % t0: the temporal index of the change point
 
-t=1:T;
+t=0:(T-1);
 
 x=sin(freq*2*pi*t/sRate+phi);
 
