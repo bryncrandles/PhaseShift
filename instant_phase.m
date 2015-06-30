@@ -5,7 +5,7 @@ function P = instant_phase(x, sRate, freq, width)
 
 % Phase is not unwrapped, and no Burn period is remove
 
-t = 1:length(x);
+t = 0:(length(x)-1);
 
 [b,a]=butter(4, 2 * width / sRate, 'low');
 
