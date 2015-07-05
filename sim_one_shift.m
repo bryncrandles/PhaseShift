@@ -1,5 +1,11 @@
 function x = sim_one_shift(T, sRate, SNR, freq, phi, delta_phi, t0)
 
+if nargin < 5
+    error('Not enough parameters')
+elseif nargin < 7
+    delta_phi = 0;
+    t0 = 0;
+end
 
 % PARAMETERS
 
@@ -20,7 +26,9 @@ t=0:(T-1);
 
 x=sin(freq*2*pi*t/sRate+phi);
 
-x(t0:end) = sin(freq*2*pi*t(t0:end)/sRate+(phi + delta_phi));
+if t0 > 0
+    x(t0:end) = sin(freq*2*pi*t(t0:end)/sRate+(phi + delta_phi));
+end
        
 epsilon = randn(1,T); % normal noise
 %epsilon = rand(1,T); % uniform noise
