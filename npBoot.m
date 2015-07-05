@@ -1,4 +1,4 @@
-function [Crit, Stat] = npBoot(P, K, alpha, nBoot, method)
+function [Crit, Stat] = npBoot(P, block_size, alpha, nBoot, method)
 
 if nargin < 4
     print('error: Incorrect number of arguements')
@@ -9,31 +9,33 @@ if nargin < 5
     method = 'permute';
 end
 
-if ~(strcmp(method, 'resample') || strcmp(method, 'permute')):
+if ~(strcmp(method, 'resample') || strcmp(method, 'permute'))
     print('error: Method must be reample or permute')
     return
 end
 
-Stat = zeros(1,nBoot);
+Stat = zeros(1, nBoot);
 
-K = floor(K);
+N = length(P);
 
-N = L*K;
+n_blocks = floor(N / block_size);
+
+N = block_size * n_blocks;
 P = P(1:N);
-index = 1:(N-1);
+index = 1:(N - 1);
 
-pBlock = reshape(P, K, L);
+pBlock = reshape(P, block_size, n_blocks);
 
 for b = 1:nBoot
     if strcmp(method, 'resample')
-        Pi = floor(rand([1,L])*L)+1;
+        Pi = floor(rand([1, n_blocks]) * n_blocks) + 1;
     elseif strcmp(method, 'permute')
-        Pi = randperm(L);
+        Pi = randperm(n_blocks);
     end
-    pData = reshape(pBlock(:, Pi), [1,N]);
-    C = sqrt(N./index./(N-index));
-    Stat(b) = max(abs(C.*cumsum(pData(1:(N-1))-mean(pData))));
+    pData = reshape(pBlock(:, Pi), [1, N]);
+    C = sqrt(N ./ index ./ (N - index));
+    Stat(b) = max(abs(C .* cumsum(pData(1:(N - 1)) - mean(pData))));
     
 end
 
-Crit = quantile(Stat, 1-alpha);
+Crit = quantile(Stat, 1 - alpha);
