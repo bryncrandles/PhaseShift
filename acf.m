@@ -37,22 +37,21 @@ if ~((a1==1 && a2==1) && (p<n1))
     error('Input number of lags p must be a 1x1 scalar, and must be less than length of series y')
 end
 
-
-
 % -------------
 % BEGIN CODE
 % -------------
 
-ta = zeros(p + 1,1) ;
+ta = ones(p + 1,1) ;
  
 N = max(size(y)) ;
 
 ybar = mean(y); 
 
 % Collect ACFs at each lag i
-for i = 0:p
-   cross_sum = (y((i + 1):N) - ybar)' * (y(1:(N - i)) - ybar);  
-   yvar = (y - ybar)' * (y - ybar) ;
-   ta(i + 1) = sum(cross_sum) / yvar; 
+if var(y) > 0
+    for i = 0:p
+        cross_sum = (y((i + 1):N) - ybar)' * (y(1:(N - i)) - ybar);  
+        yvar = (y - ybar)' * (y - ybar);
+        ta(i + 1) = sum(cross_sum) / yvar; 
+    end
 end
-
