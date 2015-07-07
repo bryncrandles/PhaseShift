@@ -7,14 +7,14 @@
 
 T = 3000;
 sRate = 250;
-SNR = 0.5;
+SNR = 0.8;
 freq = 8;
 width = 1;
 phi = 0;
 method = 'resample';
 
-nSim = 250;
-nBoot = 700;
+nSim = 300;
+nBoot = 1000;
 alpha = 0.05;
 
 list_L = (1:100) * 5;
@@ -57,10 +57,10 @@ plot([L0, L0], [0, 1], 'r', 'linewidth', 2)
 %     - reampling does better but not sufficient
 % Tried 500 and 1000 point burn
 % Tried making L = 2*tau for every signals estimated tau
+% Decreasing noise
 
 % To still try:
 % make Width smaller
-% Decrease noise
 % Different initial phi
 % Different frequency?
 % Different alpha
