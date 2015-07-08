@@ -22,7 +22,6 @@ n_blocks = floor(N / block_size);
 
 N = block_size * n_blocks;
 P = P(1:N);
-index = 1:(N - 1);
 
 pBlock = reshape(P, block_size, n_blocks);
 
@@ -33,8 +32,9 @@ for b = 1:nBoot
         Pi = randperm(n_blocks);
     end
     pData = reshape(pBlock(:, Pi), [1, N]);
-    C = sqrt(N ./ index ./ (N - index));
-    Stat(b) = max(abs(C .* cumsum(pData(1:(N - 1)) - mean(pData))));
+    C = weighted_cusum(pData);
+    [~, ind] = max(abs(C));
+    Stat(b) = abs(C(ind));
 end
 
 Crit = quantile(Stat, 1 - alpha);
