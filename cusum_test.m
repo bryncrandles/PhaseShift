@@ -8,7 +8,7 @@ end
 
 P = unwrap(P);
 
-Crit = npBoot(P, L, alpha, nBoot, method);
+Crit = npBoot2(P, L, alpha, nBoot);
 
 CUSUM = weighted_cusum(P);
 
