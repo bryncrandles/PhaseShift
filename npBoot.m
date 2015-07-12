@@ -33,7 +33,8 @@ for b = 1:nBoot
         Pi = randperm(n_blocks);
     end
     pData = reshape(pBlock(:, Pi), [1, N]);
-    C = sqrt(N ./ index ./ (N - index));
+    % C = sqrt(N ./ index ./ (N - index));
+    C = 1 / sqrt(N);
     Stat(b) = max(abs(C .* cumsum(pData(1:(N - 1)) - mean(pData))));
 end
 
