@@ -1,4 +1,4 @@
-function [Crit, Stat] = npBoot(P, block_size, alpha, nBoot)
+function [Crit, Stat] = npBoot2(P, block_size, alpha, nBoot)
 
 
 Stat = zeros(1, nBoot);
@@ -10,12 +10,10 @@ n_blocks = floor(N / block_size);
 N = block_size * n_blocks;
 P = P(1:N);
 
-pBlock = reshape(P, block_size, n_blocks);
-
 for b = 1:nBoot
-    pData = Boot(pBlock, n_blocks);
+    pData = Boot2(P, block_size, n_blocks);
     C = weighted_cusum(pData);
-    [~, ind] = max(abs(C));
+    [~, ind] = max(abs(C)); 
     Stat(b) = abs(C(ind));
 end
 
