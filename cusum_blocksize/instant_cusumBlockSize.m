@@ -5,9 +5,9 @@
 
 % Frequency band is (7, 9)
 
-T = 3000;
+T = 5000;
 sRate = 250;
-SNR = 0.8;
+SNR = 0.5;
 freq = 8;
 width = 1;
 phi = 0;

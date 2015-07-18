@@ -8,15 +8,15 @@
 T = 5000;
 
 sRate = 250;
-SNR = 0.5;
+SNR = 0.25;
 freq = 8;
-width = 0.5;
+width = 1;
 phi = 0;
 
 nSim = 500;
 alpha = 0.05;
 
-list_M = (1:100) * 2;
+list_M = (1:100) * 5;
 nM = length(list_M);
 
 count = zeros(1, nM);
