@@ -6,7 +6,7 @@ function [ind, h]=cusum_test(P, L, alpha, nBoot)
 
 P = unwrap(P);
 
-Crit = npBoot(P, L, (alpha / 2), nBoot);
+Crit = npBoot(P, L, alpha, nBoot);
 
 CUSUM = weighted_cusum(P);
 
