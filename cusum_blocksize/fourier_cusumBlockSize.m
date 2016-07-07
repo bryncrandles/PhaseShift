@@ -11,7 +11,7 @@ SNR = 0.5;
 freq = 8;
 width = 1;
 phi = 0;
-method = 'resample';
+
 
 nSim = 250;
 nBoot = 700;
@@ -38,7 +38,7 @@ for i = 40:50
             Burn = (Window - 1) / 2;
         end
         P = P((Burn + 1):(end - Burn));
-        [ind, h] = cusum_test(P, L, alpha, nBoot, method);
+        [ind, h] = cusum_test(P, L, alpha, nBoot);
         count(i) = count(i) + h;
         tau((i - 1) * nSim + j) = estimate_tau(P);
     end

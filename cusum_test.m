@@ -1,14 +1,12 @@
-function [ind, h]=cusum_test(P, L, alpha, nBoot, method)
+function [ind, h]=cusum_test(P, L, alpha, nBoot)
 
-if nargin < 5
-    method = 'resample';
-end
+
 
 % P is the time series to be tested
 
 P = unwrap(P);
 
-Crit = npBoot(P, L, (alpha / 2), nBoot, method);
+Crit = npBoot(P, L, (alpha / 2), nBoot);
 
 CUSUM = weighted_cusum(P);
 
