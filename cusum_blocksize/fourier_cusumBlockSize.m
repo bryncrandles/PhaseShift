@@ -5,25 +5,25 @@
 
 % Frequency band is (7, 9)
 
-T = 3000;
+T = 8500;
 sRate = 250;
 SNR = 0.5;
 freq = 8;
-width = 1;
+width = 0.5;
 phi = 0;
 method = 'resample';
 
-nSim = 250;
-nBoot = 700;
+nSim = 500;
+nBoot = 1000;
 alpha = 0.05;
 
-list_L = (1:100) * 5;
+list_L = (1:150) * 5;
 nL = length(list_L);
 
 count = zeros(1, nL);
 tau = zeros(1, nL * nSim);
 
-for i = 40:50
+for i = 1:nL
     disp(i)
     L = list_L(i);
     for j=1:nSim
@@ -44,6 +44,12 @@ for i = 40:50
     end
 end
 
+save fourier_cusum_blockSize_width05 tau count nSim list_L T width SNR alpha
+
+disp('fourier width = 0.5')
+
+%{
+
 figure()
 
 count = count / nSim;
@@ -53,6 +59,14 @@ plot(list_L, count, 'b', 'linewidth', 2)
 hold on
 plot([0, max(list_L)], [0.05, 0.05], 'k--')
 plot([L0, L0], [0, 1], 'r', 'linewidth', 2)
+
+%}
+
+% Similar results to the instant version. 
+% The Tau values are typically smaller due to the high frequency components in
+% the signal.
+
+
 
 
     
