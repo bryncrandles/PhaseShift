@@ -1,6 +1,7 @@
 % Test npBoot for correctness
 % Also time several different options
 
+nBoot = 100;
 T = 8000;
 P = zeros(1,T);
 
@@ -21,6 +22,7 @@ figure()
 plot(x)
 
 
+
 tic 
 for i=1:100
     [Crit, Stat] = npBoot(P, block_size, alpha, nBoot);
@@ -30,7 +32,7 @@ boot1time = toc;
 
 tic 
 for i=1:100
-    [Crit, Stat] = npBoot2(P, block_size, alpha, nBoot);
+    [Crit, Stat] = npBoot_variableBlock(P, block_size, alpha, nBoot);
 end
 boot2time = toc;
 

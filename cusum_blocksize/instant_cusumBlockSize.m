@@ -8,7 +8,6 @@
 % T = 8500, but burn away the first 4 seconds for a signal size of 7500
 T = 8500;
 sRate = 250;
-
 freq = 8;
 
 % Test out several SNR and width parameters
@@ -16,13 +15,13 @@ SNR = 0.5;
 width = 1;
 
 phi = 0;
-method = 'resample';
 
-nSim = 250;
-nBoot = 1500;
+nSim = 300;
+nBoot = 1000;
+
 alpha = 0.05;
 
-list_L = (1:150) * 5;
+list_L = (1:100) * 5;
 nL = length(list_L);
 
 count = zeros(1, nL);
@@ -36,8 +35,8 @@ for i = 25:125
         x = sim_one_shift(T, sRate, SNR, freq, phi);
         P = instant_phase(x, sRate, freq, width);
         % Burn away first 4 seconds
-        P = P((4 * sRate):end);
-        [ind, h] = cusum_test(P, L, alpha, nBoot, method);
+        P = P((2 * sRate):end);
+        [ind, h] = cusum_test(P, L, alpha, nBoot);
         count(i) = count(i) + h;
         tau((i - 1) * nSim + j) = estimate_tau(P);
     end

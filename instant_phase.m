@@ -1,4 +1,4 @@
-function P = instant_phase(x, sRate, freq, width)
+function [P, M] = instant_phase(x, sRate, freq, width)
 
 % Estimate the instantaneous phase of a time series x
 % In the band centred at freq with length 2*width
@@ -16,4 +16,6 @@ F1 = filtfilt(b, a, Y1);
 F2 = filtfilt(b, a, Y2);    
 
 P = atan2(F2, F1);
+
+M = sqrt(F1.^2+F2.^2);
 
