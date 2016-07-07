@@ -5,19 +5,18 @@
 
 % Frequency band is (7, 9)
 
-T = 5000;
+T = 2000;
 sRate = 250;
 SNR = 0.5;
 freq = 8;
-width = 1;
+width = 0.5;
 phi = 0;
-method = 'resample';
 
-nSim = 300;
-nBoot = 1000;
+nSim = 100;
+nBoot = 500;
 alpha = 0.05;
 
-list_L = (1:100) * 5;
+list_L = (1:50) * 5;
 nL = length(list_L);
 
 count = zeros(1, nL);
@@ -32,7 +31,7 @@ for i = 1:nL
         P = instant_phase(x, sRate, freq, width);
         % Burn away first 4 seconds
         P = P((2 * sRate):end);
-        [ind, h] = cusum_test(P, L, alpha, nBoot, method);
+        [ind, h] = cusum_test(P, L, alpha, nBoot);
         count(i) = count(i) + h;
         tau((i - 1) * nSim + j) = estimate_tau(P);
     end
