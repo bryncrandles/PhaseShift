@@ -1,21 +1,21 @@
-function [P, M] = instant_phase(x, sRate, freq, width)
+function [phase, magnitude] = instant_phase(signal, sampling_rate, frequency, bandwidth)
 
-% Estimate the instantaneous phase of a time series x
-% In the band centred at freq with length 2*width
+% Estimate the instantaneous phase of a time series `signal`
+% in the frequency band centred at `frequency` with size 2 * bandwidth
 
-% Phase is not unwrapped, and no Burn period is remove
+% phase is not unwrapped, and no initial period is "burned"
 
-t = 0:(length(x)-1);
+n_samples = length(signal);
+t = 0:(n_samples - 1);
 
-[b,a]=butter(4, 2 * width / sRate, 'low');
+[b, a] = butter(4, 2 * bandwidth / sampling_rate, 'low');
 
-Y1 = x .* sin(2 * pi * freq / sRate * t);
-Y2 = x .* cos(2 * pi * freq / sRate * t);
+inphase = x .* sin(2 * pi * frequency / sampling_rate * t);
+quadrature = x .* cos(2 * pi * frequency / sampling_rate * t);
 
-F1 = filtfilt(b, a, Y1);        
-F2 = filtfilt(b, a, Y2);    
+inphase = filtfilt(b, a, inphase);        
+quadrature = filtfilt(b, a, quadrature);    
 
-P = atan2(F2, F1);
-
-M = sqrt(F1.^2+F2.^2);
+phase = atan2(quadrature, inphase);
+magnitude = sqrt(inphase .^ 2 + quadrature .^ 2);
 

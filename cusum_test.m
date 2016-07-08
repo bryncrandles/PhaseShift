@@ -2,7 +2,7 @@ function [ind, h]=cusum_test(phase, blocksize, alpha, n_bootstrap)
 
 
 
-% P is the time series to be tested
+% phase is the time series to be tested
 
 phase = unwrap(phase);
 
