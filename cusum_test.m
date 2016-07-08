@@ -1,17 +1,17 @@
-function [ind, h]=cusum_test(P, L, alpha, nBoot)
+function [ind, h]=cusum_test(phase, blocksize, alpha, n_bootstrap)
 
 
 
 % P is the time series to be tested
 
-P = unwrap(P);
+phase = unwrap(phase);
 
-Crit = npBoot(P, L, alpha, nBoot);
+critical_value = nonparametric_cusum(phase, blocksize, alpha, n_bootstrap);
 
-CUSUM = weighted_cusum(P);
+statistic = weighted_cusum(phase);
 
-if max(abs(CUSUM)) > Crit
-    ind = find(abs(CUSUM)==max(abs(CUSUM)));
+if max(abs(statistic)) > critical_value
+    [~, ind] = max(abs(statistic));
     h = 1;
 else
     ind = 0;
