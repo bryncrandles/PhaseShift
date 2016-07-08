@@ -5,7 +5,7 @@
 
 % Frequency band is (7, 9)
 
-T = 5000;
+T = 7000;
 
 sRate = 250;
 SNR = 0.25;
@@ -30,7 +30,7 @@ for i = 1:nM
         x = sim_one_shift(T, sRate, SNR, freq, phi);
         P = instant_phase(x, sRate, freq, width);
         % Burn away first 4 seconds
-        P = P((4 * sRate):end);
+        P = P((4 * sRate):(end - 4*sRate));
         [ind, h] = pdd_test(P, M, alpha);
         count(i) = count(i) + h;
         tau((i - 1) * nSim + j) = estimate_tau(P);
@@ -39,12 +39,12 @@ end
 
 figure()
 
-L0 = 2 * length(P) / mean(tau);
+M0 = 2 * length(P) / mean(tau);
 
 plot(list_M, count / nSim, 'b', 'linewidth', 2)
 hold on
 plot([0, max(list_M)], [0.05, 0.05], 'k--')
-plot([L0, L0], [0, 1], 'r', 'linewidth', 2)
+plot([M0, M0], [0, 1], 'r', 'linewidth', 2)
 
 % Tried a number of different scenarios, all result in 
 % FP rates averaging 10% rather than 5%
