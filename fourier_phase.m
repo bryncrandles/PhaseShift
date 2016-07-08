@@ -22,7 +22,7 @@ phase = zeros(1, n_samples);
 m = 0:((window_size - 1) / 2);
 [~, ind] = min(abs(2 * bandwidth * m - frequency));
 
-for t=lower_boundary:upper_boundary
+for t = lower_boundary:upper_boundary
     window_signal = signal((t - half_window_size):(t + half_window_size));
     window_spectrum = fft(window_signal);
     phase(t) = angle(window_spectrum(ind));

@@ -10,8 +10,8 @@ t = 0:(n_samples - 1);
 
 [b, a] = butter(4, 2 * bandwidth / sampling_rate, 'low');
 
-inphase = x .* sin(2 * pi * frequency / sampling_rate * t);
-quadrature = x .* cos(2 * pi * frequency / sampling_rate * t);
+inphase = signal .* sin(2 * pi * frequency / sampling_rate * t);
+quadrature = signal .* cos(2 * pi * frequency / sampling_rate * t);
 
 inphase = filtfilt(b, a, inphase);        
 quadrature = filtfilt(b, a, quadrature);    
