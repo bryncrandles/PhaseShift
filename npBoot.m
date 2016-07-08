@@ -15,8 +15,7 @@ pBlock = reshape(P, block_size, n_blocks);
 for b = 1:nBoot
     pData = Boot(pBlock, n_blocks);
     C = weighted_cusum(pData);
-    [~, ind] = max(abs(C));
-    Stat(b) = abs(C(ind));
+    Stat(b) = max(abs(C));
 end
 
 Crit = quantile(Stat, 1 - alpha);
