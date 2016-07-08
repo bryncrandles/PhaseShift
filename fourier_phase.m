@@ -1,45 +1,38 @@
-function P = fourier_phase(x, sRate, freq, width)
+function phase = fourier_phase(signal, sampling_rate, frequency, bandwidth)
 % Fourier_Moving: Calculate a time series of amplitude and phase value
-%   Each value is calculated from a moving window of size Window centred at
-%   t. 
-%   I am specifically interested in a band centred at w, of width 2*dw
+%   Each value is calculated from a moving window centred at t. 
+%   I am specifically interested in a band centred at w, of width 2 * dw
 
-T = length(x);
+n_samples = length(signal);
 
-Window = round(sRate/(2*width));
-%if mod(Window,2)==0
-%    Window=Window+1;
-%end
+window_size = round(sampling_rate / (2 * bandwidth));
 
-if mod(Window, 2) == 0
-    Burn = Window / 2;
+if mod(window_size, 2) == 0
+    half_window_size = window_size / 2;
 else
-    Burn = (Window - 1) / 2;
+    half_window_size = (window_size - 1) / 2;
 end
 
-t0 = Burn+1;
-t1 = T - Burn;
+lower_boundary = half_window_size + 1;
+upper_boundary = n_samples - half_window_size;
 
-% H = hamming(Window)';
-
-P = zeros(1, T);
+phase = zeros(1, n_samples);
 
 % Need to adjust this to be the correct band
-m = 0:((Window - 1) / 2);
-ind = max(m(abs(2*width*m-freq)==min(abs(2*width*m-freq)))) + 1;
+m = 0:((window_size - 1) / 2);
+[~, ind] = min(abs(2 * bandwidth * m - frequency));
 
-for t=t0:t1
-    %y = x((t-Burn):(t+Burn)).*H;
-    y = x((t - Burn):(t + Burn));
-    Y = fft(y);
-    P(t) = angle(Y(ind));
+for t=lower_boundary:upper_boundary
+    window_signal = signal((t - half_window_size):(t + half_window_size));
+    window_spectrum = fft(window_signal);
+    phase(t) = angle(window_spectrum(ind));
 end
 
-t = 0:(T-1);
+t = 0:(n_samples - 1);
 
-P = unwrap(P);
-P = mod(P - 2 * pi * 8 * (t-Burn) / sRate + pi / 2, 2 * pi);
-P(1:Burn) = 0;
-P((end-Burn):end) = 0;
+phase = unwrap(phase);
+phase = mod(phase - 2 * pi * 8 * (t-half_window_size) / sampling_rate + pi / 2, 2 * pi);
+phase(1:half_window_size) = 0;
+phase((end-half_window_size):end) = 0;
 
 
