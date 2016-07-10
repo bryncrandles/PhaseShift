@@ -25,9 +25,9 @@ iP = iP(500:1499);
 fP = fP(500:1499);
 
 % Calculate PDD statistics
-PDD = pdd(P);
-iPDD = pdd(iP);
-fPDD = pdd(fP);
+PD = pd(P);
+iPD = pd(iP);
+fPD = pd(fP);
 
 % Plot the results
 figure()
@@ -39,13 +39,13 @@ plot(fP, 'g', 'linewidth', 2)
 
 subplot(2, 1, 2)
 hold on
-plot(PDD, 'r', 'linewidth', 2)
-plot(iPDD, 'b', 'linewidth', 2)
-plot(fPDD, 'g', 'linewidth', 2)
+plot(PD, 'r', 'linewidth', 2)
+plot(iPD, 'b', 'linewidth', 2)
+plot(fPD, 'g', 'linewidth', 2)
 
-[~, m] = max(abs(PDD))
-[~, im] = max(abs(iPDD))
-[~, fm] = max(abs(fPDD))
+[~, m] = max(abs(PD))
+[~, im] = max(abs(iPD))
+[~, fm] = max(abs(fPD))
 
 pause()
 
@@ -65,9 +65,9 @@ iP = iP(500:1499);
 fP = fP(500:1499);
 
 % Calculate PDD statistics
-PDD = pdd(P);
-iPDD = pdd(iP);
-fPDD = pdd(fP);
+PD = pd(P);
+iPD = pd(iP);
+fPD = pd(fP);
 
 % Plot the results
 figure()
@@ -79,13 +79,13 @@ plot(fP, 'g', 'linewidth', 2)
 
 subplot(2, 1, 2)
 hold on
-plot(PDD, 'r', 'linewidth', 2)
-plot(iPDD, 'b', 'linewidth', 2)
-plot(fPDD, 'g', 'linewidth', 2)
+plot(PD, 'r', 'linewidth', 2)
+plot(iPD, 'b', 'linewidth', 2)
+plot(fPD, 'g', 'linewidth', 2)
 
-[~, m] = max(abs(PDD))
-[~, im] = max(abs(iPDD))
-[~, fm] = max(abs(fPDD))
+[~, m] = max(abs(PD))
+[~, im] = max(abs(iPD))
+[~, fm] = max(abs(fPD))
 
 pause()
 
@@ -106,9 +106,9 @@ iP = iP(500:1499);
 fP = fP(500:1499);
 
 % Calculate PDD statistics
-PDD = pdd(P);
-iPDD = pdd(iP);
-fPDD = pdd(fP);
+PDD = pd(P);
+iPDD = pd(iP);
+fPDD = pd(fP);
 
 % Plot the results
 figure()
@@ -120,10 +120,10 @@ plot(fP, 'g', 'linewidth', 2)
 
 subplot(2, 1, 2)
 hold on
-plot(PDD, 'r', 'linewidth', 2)
-plot(iPDD, 'b', 'linewidth', 2)
-plot(fPDD, 'g', 'linewidth', 2)
+plot(PD, 'r', 'linewidth', 2)
+plot(iPD, 'b', 'linewidth', 2)
+plot(fPD, 'g', 'linewidth', 2)
 
-[~, m] = max(abs(PDD))
-[~, im] = max(abs(iPDD))
-[~, fm] = max(abs(fPDD))
+[~, m] = max(abs(PD))
+[~, im] = max(abs(iPD))
+[~, fm] = max(abs(fPD))
