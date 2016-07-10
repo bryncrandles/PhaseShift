@@ -31,7 +31,7 @@ for i = 1:nM
         P = instant_phase(x, sRate, freq, width);
         % Burn away first 4 seconds
         P = P((4 * sRate):(end - 4*sRate));
-        [ind, h] = pdd_test(P, M, alpha);
+        [ind, h] = pd_test(P, M, alpha);
         count(i) = count(i) + h;
         tau((i - 1) * nSim + j) = estimate_tau(P);
     end

@@ -36,7 +36,7 @@ for i = 1:nM
             Burn = (Window - 1) / 2;
         end
         P = P((Burn + 1):(end - Burn));
-        [ind, h] = pdd_test(P, M, alpha);
+        [ind, h] = pd_test(P, M, alpha);
         count(i) = count(i) + h;
         tau((i - 1) * nSim + j) = estimate_tau(P);
     end
