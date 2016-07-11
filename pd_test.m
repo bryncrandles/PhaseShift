@@ -1,15 +1,15 @@
-function [ind, h]=pd_test(P, M, alpha)
+function [ind, h] = pd_test(phase, n_replications, alpha)
 
 % P is the time series to be tested
 
-P = unwrap(P);
+phase = unwrap(phase);
 
-Crit = norminv((1 - alpha / 2) ^ (1 / M));
+critical_value = norminv((1 - alpha / 2) ^ (1 / n_replications));
 
-PD = pd(P);
+phase_derivative = pd(phase);
 
-if max(abs(PD)) > Crit
-    ind = find(abs(PD)==max(abs(PD)));
+if max(abs(phase_derivative)) > critical_value
+    ind = find(abs(phase_derivative)==max(abs(phase_derivative)));
     h = 1;
 else
     ind = 0;
