@@ -61,6 +61,9 @@ end
 
 save instant_burnSize true_positives n_simulations burn_list shift_list alpha n_samples SNR bandwidth 
 
+% Optimal burn value approximately 150 samples
+% An alternative local max at 50 samples. 
+
 %{
 
 figure()

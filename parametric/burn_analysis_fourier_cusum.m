@@ -34,7 +34,7 @@ n_samples = 5000;
 
 true_positives = zeros(n_burn_parameters, n_shifts);
 
-for i = 11:n_burn_parameters
+for i = 1:n_burn_parameters
     disp(i)
     n_burn = burn_list(i);
     signal_length = n_samples + 2 * n_burn;
@@ -60,6 +60,8 @@ end
 
 
 save fourier_burnSize true_positives n_simulations burn_list shift_list alpha n_samples SNR bandwidth 
+
+% Optimal burn values around 70 samples
 
 %{
 
