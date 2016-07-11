@@ -1,71 +1,56 @@
-
-
-% Explore ISI for simple oscillator with single phase shift and 
+% Sensitivity analysis for threshold for PD estimator
+% Explore simple oscillator no phase shift events and i.i.d noise 
 % iid noise.
 
 % Frequency band is (7, 9)
 
-T = 5000;
+signal_length = 3000;
+n_burn = 190;
 
-sRate = 250;
-SNR = 0.25;
-freq = 8;
-width = 0.5;
-phi = 0;
+n_samples = signal_length + 2 * n_burn;
 
-nSim = 500;
+sampling_rate = 250;
+SNR = 0.5;
+frequency = 8;
+bandwidth = 1;
+
+n_simulations = 500;
 alpha = 0.05;
 
-list_M = (1:100) * 5;
+list_M = 30000 + (1:50) * 20;
 nM = length(list_M);
 
-count = zeros(1, nM);
-tau = zeros(1, nM * nSim);
+false_positives = zeros(1, nM);
+tau = zeros(nM, n_simulations);
+
 
 for i = 1:nM
     disp(i)
     M = list_M(i);
-    for j=1:nSim
+    for j=1:n_simulations
+        phi = rand() * 2 * pi;
         % Simulate signal with one shift and estimate instantaneous phase
-        x = sim_one_shift(T, sRate, SNR, freq, phi);
-        P = fourier_phase(x, sRate, freq, width);
-        Window = round(sRate/(2*width));
-        if mod(Window, 2) == 0
-            Burn = Window / 2;
-        else
-            Burn = (Window - 1) / 2;
-        end
-        P = P((Burn + 1):(end - Burn));
-        [ind, h] = pd_test(P, M, alpha);
-        count(i) = count(i) + h;
-        tau((i - 1) * nSim + j) = estimate_tau(P);
+        signal = sim_one_shift(n_samples, sampling_rate, SNR, frequency, phi);
+        phase = fourier_phase(signal, sampling_rate, frequency, bandwidth);
+        phase = phase((n_burn + 1):(end - n_burn));
+        [ind, h] = pd_test(phase, M, alpha);
+        false_positives(i) = false_positives(i) + h;
+        tau(i, j) = estimate_tau(phase);
     end
 end
 
+%{ 
+
 figure()
 
-L0 = 2 * length(P) / mean(tau);
+M0 = 2 * length(phase) / mean(mean(tau));
 
-plot(list_M, count / nSim, 'b', 'linewidth', 2)
+plot(list_M, false_positives / n_simulations, 'b', 'linewidth', 2)
 hold on
 plot([0, max(list_M)], [0.05, 0.05], 'k--')
-plot([L0, L0], [0, 1], 'r', 'linewidth', 2)
+plot([M0, M0], [0, 1], 'r', 'linewidth', 2)
 
-% Tried a number of different scenarios, all result in 
-% FP rates averaging 10% rather than 5%
+%} 
 
-% Have increased nSim and list_L
-% Increased T to 20+ seconds
-% Tried permutation and resampling 
-%     - reampling does better but not sufficient
-% Tried 500 and 1000 point burn
-% Tried making L = 2*tau for every signals estimated tau
-% Decreasing noise
-
-% To still try:
-% make Width smaller
-% Different initial phi
-% Different frequency?
-% Different alpha
-
-    
+% The method does not work well for Fourier phase - M is somewhere in the
+% 50000's - suspect very low power.
