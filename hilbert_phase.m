@@ -1,4 +1,4 @@
-function [phase, magnitude] = instant_phase(signal, sampling_rate, frequency, delta)
+function [phase, magnitude] = hilbert_phase(signal, sampling_rate, frequency, bandwidth)
 % Estimate the instantaneous phase and magnitude of a time series using
 % complex demodulation algorithm.
 % Inputs:
@@ -21,7 +21,7 @@ function [phase, magnitude] = instant_phase(signal, sampling_rate, frequency, de
 n_samples = length(signal);
 t = 0:(n_samples - 1);
 
-[b, a] = butter(4, 2 * delta / sampling_rate, 'low');
+[b, a] = butter(4, 2 * bandwidth / sampling_rate, 'low');
 
 inphase = signal .* sin(2 * pi * frequency / sampling_rate * t);
 quadrature = signal .* cos(2 * pi * frequency / sampling_rate * t);
