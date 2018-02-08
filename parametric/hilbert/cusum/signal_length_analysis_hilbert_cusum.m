@@ -22,24 +22,19 @@ n_bootstrap = 1000;
 % Desired false positive rate
 alpha = 0.05;
 
-% Preliminary list of boundary values to test
-boundary_values = (20:40) * 5;
-n_boundary_values = length(boundary_values);
-max_boundary = 1000;
+% Optimial boundary value from "boundary_analysis_hilbert_cusum.m"
+boundary = 150;
 
-% An excessively large sample for now
-signal_length = 1000;
+% Preliminary list of signal lengths to test
+signal_length_values = (1:50)*50;
+n_signal_length_values = length(signal_length_values);
 
-false_positives = zeros(1, n_boundary_values);
+false_positives = zeros(1, n_signal_length_values);
 
-for i = 1:n_boundary_values
+for i = 1:n_signal_length_values
     disp(i)
-    boundary = boundary_values(i);
-    n_samples = signal_length + 2 * boundary;
-    % Critical value should be independent of boundary, otherwise this is
-    % pointless.
-    bootstrap_samples = signal_length + 2 * max_boundary;
-    [critical_value, statistic] = parametric_cusum(bootstrap_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', max_boundary);
+    n_samples = signal_length_values(i) + 2 * boundary;
+    [critical_value, statistic] = parametric_cusum(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary);
     for k=1:n_simulations
         % Random phase values
         phi = rand() * 2 * pi;
@@ -57,9 +52,4 @@ for i = 1:n_boundary_values
     end
 end
 
-% The boundary value should be somewhere around 140-160 points. For now we
-% take it to be 150. 
-
-
-
-
+% There doesn't appear to be any minimum over and above the boundary value.
