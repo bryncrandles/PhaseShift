@@ -1,4 +1,4 @@
-% Script for generating a figure for the parametric power analyses. The
+% Script for generating figure S2 for the parametric power analyses. The
 % figure should display the statistical power of the methods as a function
 % of shift-magnitude and boudary. 
 
@@ -23,6 +23,9 @@ power = squeeze(true_positives / n_simulations);
 
 % Flip power so low Boundary values are on the bottom of the plot
 power = flipud(power);
+
+% False positive rate for column 0 (no shift)
+power(:, 1) = 1 - power(:, 1);
 
 h = heatmap(power);
 h.XLabel = 'Phase Shift Magnitude';
