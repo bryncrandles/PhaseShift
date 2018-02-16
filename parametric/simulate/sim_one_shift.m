@@ -1,39 +1,42 @@
-function x = sim_one_shift(T, sRate, SNR, freq, phi, delta_phi, t0)
+function signal = sim_one_shift(n_samples, sampling_rate, SNR, frequency, phase, shift_magnitude, shift_latency)
+% Simulate observations from a noisy oscillator with phase shift event.
+% Noise is i.i.d normally distributed. 
+% Inputs:
+%   n_samples (int) - The number of samples in the signal
+%   sampling_rate (int) - Sampling rate of the observations
+%   SNR (float) - Signal-to-noise ratio
+%   frequency (float) - Frequency of the oscillator
+%   phase (float) - Initial phase of the oscillator
+%   shift_magnitude (float) - Change in phase due to phase shift 
+%   shift_latency (int) - Sample index at which the shift occurs
+%
+% Outputs:
+%   signal (array(float)) - The simulated time series
 
+
+% If no shift information is provided, then defaults to no shifts. 
 if nargin < 5
     error('Not enough parameters')
 elseif nargin < 7
-    delta_phi = 0;
-    t0 = 0;
+    shift_magnitude = 0;
+    shift_latency = 0;
 end
 
-% PARAMETERS
+% Simulate oscillator with constant phase
+t = 0:(n_samples - 1);
+signal = sin(frequency * 2 * pi * t / sampling_rate + phase);
 
-% T: The number of samples in the signal
-
-% sRate: sampling rate, typically 250 samples per second
-
-% freq: frequency of the ocsillator
- 
-% SNR: singal-to-noise ratio: 1 for no noise
-
-% phi: the initial phase of the oscillator
-% delta_phi: the change in phase of the oscillator
-
-% t0: the temporal index of the change point
-
-t=0:(T-1);
-
-x=sin(freq*2*pi*t/sRate+phi);
-
-if t0 > 0
-    x(t0:end) = sin(freq*2*pi*t(t0:end)/sRate+(phi + delta_phi));
+% Apply phase shift
+if shift_latency > 0
+    signal(shift_latency:end) = sin(frequency * 2 * pi * t(shift_latency:end) / sampling_rate + (phase + shift_magnitude));
 end
-       
-epsilon = randn(1,T); % normal noise
-%epsilon = rand(1,T); % uniform noise
 
-x = x ./ norm(x);
+% Random Gaussian noise
+epsilon = randn(1,n_samples);
+
+% Normalize signal and noise
+signal = signal ./ norm(signal);
 epsilon = epsilon ./ norm(epsilon);
 
-x = SNR .* x + (1 - SNR) .* epsilon;
+% Combine signal and noise at the desired ratio
+signal = SNR .* signal + (1 - SNR) .* epsilon;

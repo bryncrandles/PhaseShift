@@ -36,7 +36,7 @@ for boot = 1:n_bootstrap
     bootstrap_signal = no_shifts(n_samples, sampling_rate, SNR, frequency, phi);
     bootstrap_phase = get_phase(bootstrap_signal, sampling_rate, frequency, bandwidth);
     bootstrap_phase = unwrap(bootstrap_phase);
-    bootstrap_phase = bootstrap_phase((boundary + 1):(end-boundary));
+    bootstrap_phase = bootstrap_phase((boundary + 1):(end - boundary));
     statistics(boot) = max(abs(weighted_cusum(bootstrap_phase)));
 end
 
