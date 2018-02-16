@@ -1,6 +1,19 @@
-% Theoreitical analysis of the power of shift identification methods 
-% Use many different SNRs and Shift magnitude values
+% Theoretical analysis of the statistical power of CUSUM statistics for
+% shift identification using parametric boostrapping. 
 
+% The boundary effects of estimating phase (both real boundaries and
+% change-points) will influence power. The boundary effect will require a
+% higher threshold for an event. Thus, removing the boundary effects can
+% lower the threshold and increase power. Here we study this balance. 
+
+
+% latency tolerance - how close does the estimated latency need to be to
+% the true latency in order to consider the phase shift correctly
+% identified?
+
+% There is quite a bit of variability in estimated latency. Will take +/-
+% 50 as a threshold and can estimate latency error seperately if needed.
+latency_tolerance = 50;
 
 % Frequency band is (7, 9)
 frequency = 8;
@@ -10,13 +23,13 @@ bandwidth = 1;
 sampling_rate = 250;
 
 % Number of samples
-signal_length = 3000;
-n_burn = 150;
-n_samples = signal_length + 2 * n_burn;
-shift_latency = n_burn + signal_length / 2;
+n_samples = 1000;
 
-% Number of simulations for each blocksize
-n_simulations = 10;
+% Shift occurs in the middle of the signal, with variable magnitude
+shift_latency = n_samples / 2;
+
+shift_levels = (0:21) ./ 21 .* pi;
+n_shift_levels = length(shift_levels);
 
 % Number of bootstrap samples for estimating critical values
 n_bootstrap = 5000;
@@ -24,38 +37,43 @@ n_bootstrap = 5000;
 % Significance level
 alpha = 0.05;
 
-% List of noise levels to be considered
-dB = (-10:10)/2;
-SNR_list = 10.^(dB./10) ./ (1+10.^(dB./10));
-n_SNR = length(SNR_list);
+% Three different noise levels to be considered
+dB = (-1:1) / 2;
+SNR_levels = 10.^(dB) ./ (1+10.^(dB));
+n_SNR_levels = length(SNR_levels);
 
-% List of shift magnitudes to be considered
-shift_list = (1:21) ./ 21 .* pi;
-n_shift = length(shift_list);
+% Boundary levels from 0s to 1s in 25 point intervals
+boundary_levels = (0:10) * 25;
+n_boundary_levels = length(boundary_levels);
+
+% Number of simulations for each blocksize
+n_simulations = 200;
 
 % Initialize results
-true_positive = zeros(n_SNR, n_shift, n_bootstrap);
-estimated_latency = zeros(n_SNR, n_shift, n_bootstrap);
+true_positives = zeros(n_SNR_levels, n_boundary_levels, n_shift_levels);
 
-for i = 1:n_SNR
-    SNR = SNR_list(i)
-    critical_value = parametric_cusum_instant(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, n_burn);
-    for j = 1:n_shift
-        shift_magnitude = shift_list(j);
-        for k = 1:n_simulations
-            phi = rand() * 2 * pi;
-            % Simulate signal with single phase shift event 
-            signal = sim_one_shift(signal_length, sampling_rate, SNR, frequency, phi, shift_magnitude, shift_latency);
-            % Estimate fourier phase
-            phase = instant_phase(signal, sampling_rate, frequency, bandwidth);
-            phase = phase((1+n_burn):(end - n_burn));
-            [max_value, index] = max(abs(weighted_cusum(phase)));
-            if max_value > critical_value
-                true_positive(i, j, k) = 1;
-                estimated_latency(i, j, k) = index;
+for i = 1:n_SNR_levels
+    SNR = SNR_levels(i)
+    for j = 1:n_boundary_levels
+        boundary = boundary_levels(j)
+        critical_value = parametric_cusum(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary);
+        for k = 1:n_shift_levels
+        shift_magnitude = shift_levels(k)
+            for l = 1:n_simulations
+                phi = rand() * 2 * pi;
+                % Simulate signal with single phase shift event 
+                signal = sim_one_shift(n_samples, sampling_rate, SNR, frequency, phi, shift_magnitude, shift_latency);
+                % Estimate fourier phase
+                phase = hilbert_phase(signal, sampling_rate, frequency, bandwidth);
+                phase = unwrap(phase);
+                phase = phase((1 + boundary):(end - boundary));
+                [max_value, index] = max(abs(weighted_cusum(phase)));
+                if max_value > critical_value && abs(boundary + index - shift_latency) < latency_tolerance
+                    true_positives(i, j, k) = true_positives(i, j, k) + 1;
+                end
             end
         end
-    end   
+    end
 end
 
-save power_anlaysis_instant_cusum frequency bandwidth SNR_list shift_list true_positive estimated_latency n_simulations
+save power_analysis_hilbert_cusum frequency bandwidth SNR_levels shift_levels boundary_levels n_simulations true_positives
