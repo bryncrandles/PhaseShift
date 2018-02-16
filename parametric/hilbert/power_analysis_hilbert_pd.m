@@ -1,4 +1,4 @@
-% Theoretical analysis of the statistical power of PD statistics for
+% Simulation analysis of the statistical power of PD statistics for
 % shift identification using parametric boostrapping. 
 
 % The boundary effects of estimating phase (both real boundaries and
@@ -63,7 +63,7 @@ for i = 1:n_SNR_levels
                 phi = rand() * 2 * pi;
                 % Simulate signal with single phase shift event 
                 signal = sim_one_shift(n_samples, sampling_rate, SNR, frequency, phi, shift_magnitude, shift_latency);
-                % Estimate fourier phase
+                % Estimate phase (hilbert)
                 phase = hilbert_phase(signal, sampling_rate, frequency, bandwidth);
                 phase = unwrap(phase);
                 phase = phase((1 + boundary):(end - boundary));
