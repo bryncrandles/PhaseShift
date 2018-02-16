@@ -28,7 +28,7 @@ n_samples = 1000;
 % Shift occurs in the middle of the signal, with variable magnitude
 shift_latency = n_samples / 2;
 
-shift_levels = (0:21) ./ 21 .* pi;
+shift_levels = (0:20) ./ 20 .* pi;
 n_shift_levels = length(shift_levels);
 
 % Number of bootstrap samples for estimating critical values
@@ -47,7 +47,7 @@ boundary_levels = (0:10) * 25;
 n_boundary_levels = length(boundary_levels);
 
 % Number of simulations for each blocksize
-n_simulations = 200;
+n_simulations = 1000;
 
 % Initialize results
 true_positives = zeros(n_SNR_levels, n_boundary_levels, n_shift_levels);
@@ -76,4 +76,4 @@ for i = 1:n_SNR_levels
     end
 end
 
-save power_analysis_hilbert_cusum frequency bandwidth SNR_levels shift_levels boundary_levels n_simulations true_positives
+save power_analysis_cusum frequency bandwidth SNR_levels shift_levels boundary_levels n_simulations true_positives
