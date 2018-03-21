@@ -1,4 +1,4 @@
-function [critical_value, critical_value_lower, critical_value_upper] = parametric_pdd2(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, phase_type, boundary, shift_magnitude, shift_latency, latency_tolerance)
+function [critical_value, critical_value_lower, critical_value_upper] = parametric_pd2(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, phase_type, boundary, shift_magnitude, shift_latency, latency_tolerance)
 % Parametric bootstrap procedure to estimating the critical values for the
 % upper and lower halves of a signal after the discovery of an initial
 % phase shift event with specific magnitude and latency (i.e., recursive 
@@ -32,7 +32,7 @@ elseif phase_type == 'fourier'
     get_phase = @fourier_phase;
 end
 
-critical_value = parametric_pdd(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, phase_type, boundary);
+critical_value = parametric_pd(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, phase_type, boundary);
 
 statistics_lower = zeros(1, n_bootstrap);
 statistics_upper = zeros(1, n_bootstrap);
@@ -62,7 +62,8 @@ while count_bootstraps < n_bootstrap && count_fails < max_fails
 end
 
 if count_fails >= max_fails
-    error('Function aborted because original shift not identified')    
+    critical_value_lower = Inf;
+    critical_value_upper = Inf;    
 else
     critical_value_lower = quantile(statistics_lower, 1 - alpha);
     critical_value_upper = quantile(statistics_upper, 1 - alpha);
