@@ -11,27 +11,25 @@ cd 'C:\Users\slipperyhank\Documents\MATLAB\PhaseShift\parametric\hilbert'
 % cd 'C:\Users\slipperyhank\Documents\MATLAB\PhaseShift\parametric\wavelet'
 
 % Load CUSUM or PD results
-% load power_analysis_cusum
-load power_analysis_pd
+% load isi_analysis_cusum
+load isi_analysis_pd
 
-% Select SNR value to plot
-SNR_levels
-true_positives = true_positives(2, :, :);
+% SNR value is fixed at 0.5
 
 % Normalize to get statistical power
-power = squeeze(true_positives / n_simulations);
+power = true_positives / n_simulations;
 
-% Flip power so low Boundary values are on the bottom of the plot
-power = flipud(power);
+% Flip power so low ISI values are on the bottom of the plot
+% power = flipud(power);
 
 % False positive rate for column 0 (no shift)
 % power(:, 1) = 1 - power(:, 1);
 
 h = heatmap(power);
 h.XLabel = 'Phase Shift Magnitude';
-h.YLabel = 'Boundary Value';
+h.YLabel = 'ISI Value';
 h.CellLabelColor = 'none';
 %h.XDisplayLabels = {'0', '', '', '', '', '', '', '', '', '', '\pi/2', '', '', '', '', '', '', '', '', '', '\pi'};
 %h.XDisplayLabels = {'0', '', '', '', '', '0.5 s', '', '', '', '', '1 s'};
-h.Title = 'Statistical Power of PD Estimator';
+h.Title = 'Statistical Power of PD Estimator (2 events)';
 h.FontSize = 16;
