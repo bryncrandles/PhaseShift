@@ -8,7 +8,7 @@
 
 % There is quite a bit of variability in estimated latency. Will take +/-
 % 50 as a threshold and can estimate latency error seperately if needed.
-latency_tolerance = 75;
+latency_tolerance = 50;
 
 % Frequency band is (7, 9)
 frequency = 8;
@@ -64,34 +64,22 @@ for i = 1:n_isi_levels
             phase = hilbert_phase(signal, sampling_rate, frequency, bandwidth);
             phase = unwrap(phase);
             phase = phase((1 + boundary):(end - boundary));
-            [max_value, estimated_latency] = max(abs(weighted_cusum(phase)));
+            % Enforce that the target shift is the first one identified
+            cusum_statistic = abs(weighted_cusum(phase));
+            cusum_statistic(1:((shift_latency1 - boundary) - latency_tolerance)) = 0;
+            cusum_statistic(((shift_latency1 - boundary) + latency_tolerance):end) = 0;
+            [max_value, estimated_latency] = max(cusum_statistic);
             if max_value > critical_value 
-                if abs(boundary + estimated_latency - shift_latency1) < latency_tolerance
-                    upper_phase = phase(estimated_latency + boundary + 1:end);
-                    [max_value_upper, estimated_latency_upper] = max(abs(weighted_cusum(upper_phase)));
-                    if max_value_upper > critical_value_upper 
-                        if abs(boundary + estimated_latency + estimated_latency_upper - shift_latency2) < latency_tolerance
-                            true_positives(i, j) = true_positives(i, j) + 1;
-                        else
-                            stage2_fails_B(i, j) = stage2_fails_B(i, j) + 1;
-                        end
+                upper_phase = phase(estimated_latency + boundary + 1:end);
+                [max_value_upper, estimated_latency_upper] = max(abs(weighted_cusum(upper_phase)));
+                if max_value_upper > critical_value_upper
+                    if abs(2 * boundary + estimated_latency + estimated_latency_upper - shift_latency2) < latency_tolerance
+                        true_positives(i, j) = true_positives(i, j) + 1;
                     else
-                        stage2_fails_A(i, j) = stage2_fails_A(i, j) + 1;
-                    end
-                elseif abs(boundary + estimated_latency - shift_latency2) < latency_tolerance
-                    lower_phase = phase(1:estimated_latency - boundary);
-                    [max_value_lower, estimated_latency_lower] = max(abs(weighted_cusum(lower_phase)));
-                    if max_value_lower > critical_value_lower 
-                        if abs(boundary + estimated_latency_lower - shift_latency1) < latency_tolerance
-                            true_positives(i, j) = true_positives(i, j) + 1;
-                        else
-                            stage2_fails_B(i, j) = stage2_fails_B(i, j) + 1;
-                        end
-                    else
-                        stage2_fails_A(i, j) = stage2_fails_A(i, j) + 1;
+                        stage2_fails_B(i, j) = stage2_fails_B(i, j) + 1;
                     end
                 else
-                    stage1_fails_B(i, j) = stage1_fails_B(i, j) + 1;
+                    stage2_fails_A(i, j) = stage2_fails_A(i, j) + 1;
                 end
             else
                 stage1_fails_A(i, j) = stage1_fails_A(i, j) + 1;
@@ -100,4 +88,4 @@ for i = 1:n_isi_levels
     end
 end
 
-save isi_analysis_cusum frequency bandwidth SNR shift_levels isi_levels n_simulations true_positives stage1_fails_A stage1_fails_B stage2_fails_A stage2_fails_B
+save isi_analysis_cusum frequency bandwidth SNR shift_levels isi_levels n_simulations latency_tolerance true_positives stage1_fails_A stage1_fails_B stage2_fails_A stage2_fails_B
