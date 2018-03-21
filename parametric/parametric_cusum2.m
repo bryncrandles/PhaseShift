@@ -62,7 +62,8 @@ while count_bootstraps < n_bootstrap && count_fails < max_fails
 end
 
 if count_fails >= max_fails
-    error('Function aborted because original shift not identified')
+    critical_value_lower = Inf;
+    critical_value_upper = Inf; 
 else
     critical_value_lower = quantile(statistics_lower, 1 - alpha);
     critical_value_upper = quantile(statistics_upper, 1 - alpha);
