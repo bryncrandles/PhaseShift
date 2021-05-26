@@ -1,11 +1,10 @@
 % Adapted from isi_analysis_hilbert_cusum
 
 % add path to files
-%addpath(genpath('/home/bc11xx/projects/def-wjmarsha/bc11xx/phase-shift-stuff/PhaseShift/'))
-addpath(genpath('/Users/bryncrandles/Documents/phase-shift-2021/PhaseShift/'))
+addpath(genpath('/home/bc11xx/projects/def-wjmarsha/bc11xx/phase-shift-stuff/PhaseShift/'))
+
 % set directory
-%cd '/home/bc11xx/projects/def-wjmarsha/bc11xx/phase-shift-stuff/'
-cd '/Users/bryncrandles/Documents/phase-shift-2021'
+cd '/home/bc11xx/projects/def-wjmarsha/bc11xx/phase-shift-stuff/'
 
 % Frequency band is (7, 9)
 frequency = 8;
@@ -58,6 +57,7 @@ for i = 1:n_SNR_levels
     SNR = SNR_levels(i);
     % get critical value for the whole signal 
     [critical_value, ~] = parametric_cusum(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary);
+    [critical_value_upper, ~] = parametric_pd3(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary, shift_magnitude, shift_latency1, upper_boundary, latency_tolerance);
     for j = 1:n_shift_levels
         shift_magnitude = shift_levels(j);
         for k = 1:n_simulations
@@ -76,7 +76,6 @@ for i = 1:n_SNR_levels
             [max_value, estimated_latency] = max(cusum_statistic);
             if max_value > critical_value
                upper_phase = phase((estimated_latency + upper_boundary + 1):end);
-               critical_value_upper = parametric_cusum3(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary, shift_magnitude, shift_latency1, upper_boundary, latency_tolerance);
                [max_value_upper, estimated_latency_upper] = max(abs(weighted_cusum(upper_phase)));
                if max_value_upper > critical_value_upper 
                   if abs(boundary + estimated_latency + upper_boundary + estimated_latency_upper - shift_latency2) < latency_tolerance         
@@ -98,4 +97,4 @@ end
 savename = ['ISI_analysis_cusum_boundary_10_' date '.mat'];
 save(savename, 'latency_tolerance', 'frequency', 'bandwidth', 'alpha', 'sampling_rate', 'shift_latency1', 'shift_latency2', 'boundary', 'upper_boundary', 'shift_levels', 'SNR_levels', 'n_bootstrap', 'n_simulations', 'SNR', 'true_positives', 'stage1_fails', 'stage2_fails_A', 'stage2_fails_B');
 
-%exit
+exit

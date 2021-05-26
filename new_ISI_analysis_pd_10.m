@@ -56,7 +56,8 @@ stage2_fails_B = zeros(n_SNR_levels, n_shift_levels);
 for i = 1:n_SNR_levels
     SNR = SNR_levels(i);
     % get critical value for the whole signal 
-    [critical_value, ~] = parametric_pd(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary, boundary);
+    [critical_value, ~] = parametric_pd(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary);
+    [critical_value_upper, ~] = parametric_pd3(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary, shift_magnitude, shift_latency1, upper_boundary, latency_tolerance);
     for j = 1:n_shift_levels
         shift_magnitude = shift_levels(j);
         for k = 1:n_simulations
@@ -75,7 +76,6 @@ for i = 1:n_SNR_levels
             [max_value, estimated_latency] = max(pd_statistic);
             if max_value > critical_value
                upper_phase = phase((estimated_latency + upper_boundary + 1):end);
-               critical_value_upper = parametric_pd3(n_samples, sampling_rate, SNR, frequency, bandwidth, alpha, n_bootstrap, 'hilbert', boundary, shift_magnitude, shift_latency1, upper_boundary, latency_tolerance);
                [max_value_upper, estimated_latency_upper] = max(abs(pd(upper_phase)));
                if max_value_upper > critical_value_upper 
                   if abs(boundary + estimated_latency + upper_boundary + estimated_latency_upper - shift_latency2) < latency_tolerance         
