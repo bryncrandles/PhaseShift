@@ -48,13 +48,15 @@ count_bootstraps = 0;
 count_fails = 0;
 max_fails = 1000;
 
-while count_bootsraps < n_bootstrap && count_fails < max_fails
-    bootstrap_signal = sim_one_shift(n_samples, sampling_rate, SNR, frequency, phase, shift_magnitude, shift_latency);
+while count_bootstraps < n_bootstrap && count_fails < max_fails
+    phi = rand() * 2 * pi;
+    bootstrap_signal = sim_one_shift(n_samples, sampling_rate, SNR, frequency, phi, shift_magnitude, shift_latency);
     bootstrap_phase = get_phase(bootstrap_signal, sampling_rate, frequency, bandwidth);
     bootstrap_phase = unwrap(bootstrap_phase);
     bootstrap_phase = bootstrap_phase((boundary + 1):(end - boundary));
     [max_value, estimated_latency] = max(abs(weighted_cusum(bootstrap_phase)));
     if max_value > critical_value && abs(boundary + estimated_latency - shift_latency) < latency_tolerance
+       count_bootstraps = count_bootstraps + 1;
        upper_phase = bootstrap_phase((estimated_latency + 1 + upper_boundary):end);
        statistics_upper(count_bootstraps) = max(abs(weighted_cusum(upper_phase)));
     else
